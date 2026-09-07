@@ -1,0 +1,33 @@
+{
+  "train": {
+    "n": 8882,
+    "classes": {
+      "application": 4290,
+      "helper": 4173,
+      "extender": 419
+    }
+  },
+  "val": {
+    "n": 1904,
+    "classes": {
+      "application": 920,
+      "helper": 895,
+      "extender": 89
+    }
+  },
+  "test_indist": {
+    "n": 1904,
+    "classes": {
+      "application": 920,
+      "helper": 894,
+      "extender": 90
+    }
+  },
+  "test_ood": {
+    "n": 2310,
+    "classes": {
+      "other": 2012,
+      "incerto": 298
+    }
+  }
+}

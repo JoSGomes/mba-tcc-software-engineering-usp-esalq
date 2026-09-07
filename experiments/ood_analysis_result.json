@@ -1,0 +1,29 @@
+{
+  "feature": "sbert",
+  "model_type": "xgboost",
+  "params": {
+    "learning_rate": 0.1,
+    "max_depth": 6,
+    "n_estimators": 300
+  },
+  "n_train_total": 12690,
+  "n_ood": 2310,
+  "tau": 0.5,
+  "rejection_rate": 0.070995670995671,
+  "n_rejected": 164,
+  "n_accepted": 2146,
+  "confidence_mean": 0.729902982711792,
+  "confidence_median": 0.7317543625831604,
+  "confidence_std": 0.15555739402770996,
+  "predicted_class_distribution_all": {
+    "application": 1115,
+    "helper": 1140,
+    "extender": 55
+  },
+  "predicted_class_distribution_accepted": {
+    "application": 1048,
+    "helper": 1069,
+    "extender": 29
+  },
+  "seed": 42
+}

@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-09-04T16:02:58.510358",
+  "seed": 42,
+  "feature_sets": [
+    "doc2vec",
+    "sbert",
+    "codebert"
+  ],
+  "features": {
+    "doc2vec": {
+      "train": {
+        "shape": [
+          8882,
+          100
+        ],
+        "dtype": "float32"
+      },
+      "val": {
+        "shape": [
+          1904,
+          100
+        ],
+        "dtype": "float32"
+      },
+      "test_indist": {
+        "shape": [
+          1904,
+          100
+        ],
+        "dtype": "float32"
+      },
+      "test_ood": {
+        "shape": [
+          2310,
+          100
+        ],
+        "dtype": "float32"
+      }
+    },
+    "sbert": {
+      "train": {
+        "shape": [
+          8882,
+          384
+        ],
+        "dtype": "float32"
+      },
+      "val": {
+        "shape": [
+          1904,
+          384
+        ],
+        "dtype": "float32"
+      },
+      "test_indist": {
+        "shape": [
+          1904,
+          384
+        ],
+        "dtype": "float32"
+      },
+      "test_ood": {
+        "shape": [
+          2310,
+          384
+        ],
+        "dtype": "float32"
+      }
+    },
+    "codebert": {
+      "train": {
+        "shape": [
+          8882,
+          768
+        ],
+        "dtype": "float32"
+      },
+      "val": {
+        "shape": [
+          1904,
+          768
+        ],
+        "dtype": "float32"
+      },
+      "test_indist": {
+        "shape": [
+          1904,
+          768
+        ],
+        "dtype": "float32"
+      },
+      "test_ood": {
+        "shape": [
+          2310,
+          768
+        ],
+        "dtype": "float32"
+      }
+    }
+  },
+  "label_classes": [
+    "application",
+    "helper",
+    "extender"
+  ]
+}

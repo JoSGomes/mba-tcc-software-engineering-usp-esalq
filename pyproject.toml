@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "tcc-ml-oss"
+version = "0.1.0"
+description = "Mineração e Classificação de Repositórios Open Source com Machine Learning"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy==1.26.4",
+    "pandas==2.2.2",
+    "scikit-learn==1.4.2",
+    "imbalanced-learn==0.12.3",
+    "gensim==4.3.2",
+    "xgboost==2.1.0",
+    "joblib==1.4.2",
+    "requests==2.32.3",
+    "tenacity==8.3.0",
+    "pyarrow==16.1.0",
+    "fastparquet==2024.2.0",
+    "jupytext==1.16.2",
+    "jupyter==1.0.0",
+    "ipykernel==6.29.4",
+    "matplotlib==3.9.0",
+    "seaborn==0.13.2",
+    "tqdm==4.70.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.2.1",
+    "pytest-cov==5.0.0",
+    "ruff==0.4.7",
+]
+# torch NÃO é listado aqui: instalação com suporte CUDA exige --index-url
+# (ver README.md "Setup" para o comando exato). Instalar torch primeiro,
+# depois `pip install -e ".[dev,embeddings]"` reaproveita o torch já
+# instalado em vez de puxar uma build CPU do PyPI.
+embeddings = [
+    "sentence-transformers==2.7.0",
+    "transformers==4.57.6",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["extracao*", "preparacao*", "modelagem*", "avaliacao*", "config*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+markers = [
+    "slow: baixa e roda o modelo real (SBERT/CodeBERT) — gated por RUN_SLOW_MODEL_TESTS=1, não roda por padrão",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

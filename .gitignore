@@ -1,0 +1,81 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data (não versionar dados brutos/processados)
+data/raw/*
+data/processed/*
+data/interim/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/processed/splits.json
+!data/processed/split_distribution.json
+!data/processed/label_encoder.json
+!data/processed/features_meta.json
+!data/processed/X_doc2vec_train.npy
+!data/processed/X_doc2vec_val.npy
+!data/processed/X_doc2vec_test_indist.npy
+!data/processed/X_doc2vec_test_ood.npy
+!data/processed/y_train.npy
+!data/processed/y_val.npy
+!data/processed/y_test_indist.npy
+!data/interim/.gitkeep
+# Outputs do pipeline de rotulagem (versionados)
+!data/raw/gold_standard.csv
+!data/raw/kappa_review.csv
+!data/raw/kappa_review_batch2.csv
+!data/raw/kappa_review_combined.csv
+!data/raw/uncertain_for_review.csv
+!data/raw/kappa_result.json
+!data/raw/labels.parquet
+!data/processed/kappa_review_input.json
+
+# Models
+*.joblib
+*.pkl
+*.h5
+*.pt
+*.pth
+
+# Experiment artifacts (manter registry.csv e a matriz de confusao agregada entre representacoes)
+experiments/*.json
+!experiments/registry.csv
+!experiments/nested_cv_confusion_matrices.json
+!experiments/ood_analysis_result.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Ruff
+.ruff_cache/
+
+# Logs
+*.log
+logs/

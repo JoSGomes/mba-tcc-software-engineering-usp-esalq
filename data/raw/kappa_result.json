@@ -1,0 +1,76 @@
+{
+  "kappa": 0.8038895244320967,
+  "n_reviewed": 100,
+  "n_total": 15000,
+  "classes": [
+    "application",
+    "helper",
+    "extender",
+    "other"
+  ],
+  "classification_report": {
+    "application": {
+      "precision": 0.9166666666666666,
+      "recall": 0.9166666666666666,
+      "f1-score": 0.9166666666666666,
+      "support": 48.0
+    },
+    "helper": {
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "f1-score": 0.9090909090909091,
+      "support": 35.0
+    },
+    "extender": {
+      "precision": 0.8571428571428571,
+      "recall": 0.42857142857142855,
+      "f1-score": 0.5714285714285714,
+      "support": 14.0
+    },
+    "other": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "accuracy": 0.88,
+    "macro avg": {
+      "precision": 0.9017857142857143,
+      "recall": 0.8363095238095237,
+      "f1-score": 0.8492965367965368,
+      "support": 100.0
+    },
+    "weighted avg": {
+      "precision": 0.8816666666666667,
+      "recall": 0.88,
+      "f1-score": 0.8681818181818182,
+      "support": 100.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      44,
+      3,
+      1,
+      0
+    ],
+    [
+      0,
+      35,
+      0,
+      0
+    ],
+    [
+      4,
+      4,
+      6,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      3
+    ]
+  ]
+}

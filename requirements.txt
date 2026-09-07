@@ -1,0 +1,30 @@
+# Generated from pyproject.toml — use pip install -e ".[dev]" for development
+# This file is provided for environments that do not support pyproject.toml directly.
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.4.2
+imbalanced-learn==0.12.3
+xgboost==2.1.0
+gensim==4.3.2
+joblib==1.4.2
+requests==2.32.3
+tenacity==8.3.0
+pyarrow==16.1.0
+fastparquet==2024.2.0
+jupytext==1.16.2
+jupyter==1.0.0
+ipykernel==6.29.4
+matplotlib==3.9.0
+seaborn==0.13.2
+tqdm==4.70.0
+# dev
+pytest==8.2.1
+pytest-cov==5.0.0
+ruff==0.4.7
+# embeddings (SBERT/CodeBERT) - pip install -e ".[dev,embeddings]"
+# ATENÇÃO: instalar torch com CUDA ANTES desta lista, via:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+# (senão o pip resolve uma build CPU do torch a partir do PyPI)
+sentence-transformers==2.7.0
+transformers==4.57.6
+torch==2.6.0+cu124
