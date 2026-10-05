@@ -189,6 +189,7 @@ python extracao/compute_revisao_manual.py      # kappa por procedimento, revisã
 
 ```bash
 python modelagem/figura_fluxo_nested_cv.py
+python modelagem/figura_matrizes_rf.py
 python modelagem/figura_matrizes_confusao.py
 python avaliacao/figura_confianca_calibracao.py
 python modelagem/figura_visao_geral.py
@@ -204,7 +205,8 @@ resultados do nested CV já salvos).
 
 | No TCC | Arquivo | Gerado por |
 |---|---|---|
-| Tabelas 4 e 5, Figuras 2 a 4 (RF no split fixo) | `experiments/registry.csv`, `figures/cm_{d2ac1ac9,018ed2b3,50fa0ee9}.tiff` | `modelagem/baseline.py` |
+| Tabelas 4 e 5 (RF no split fixo) | `experiments/registry.csv` | `modelagem/baseline.py` |
+| Figuras 2 a 4 (matrizes do RF no teste) | `experiments/figures/cm_rf_{d2ac1ac9,018ed2b3,50fa0ee9}_compacta.tiff` | `modelagem/figura_matrizes_rf.py` |
 | Tabela 6 (RF na validação cruzada aninhada) | `experiments/nested_cv_{scores,summary}.csv` | `modelagem/baseline.py` |
 | Tabelas 7 e 10 (comparações pareadas) | `experiments/comparacoes_estatisticas.csv` | `modelagem/comparacoes_estatisticas.py` |
 | Tabela 8 (laço interno e escolhas por rodada) | `experiments/nested_cv_full_selection_{scores,choices}.csv` | `modelagem/nested_cv_full_selection.py` |
