@@ -5,7 +5,7 @@ Verifica:
   - StratifiedKFold externo e interno
   - pipeline SMOTE + GridSearchCV
   - escrita do CSV de scores por fold
-  - Wilcoxon sem crash
+  - escrita do resumo (media +/- dp) dos 3 experimentos
   - schema das colunas do CSV
 
 Uso:
@@ -22,14 +22,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.seeds import GLOBAL_SEED
 
 SMOKE_CV_PATH       = Path("experiments/smoke_nested_cv_scores.csv")
-SMOKE_WILCOXON_PATH = Path("experiments/smoke_wilcoxon_results.csv")
 SMOKE_SUMMARY_PATH  = Path("experiments/smoke_nested_cv_summary.csv")
 
 # Arquivos de producao que o smoke test NUNCA pode alterar — checados por
 # hash de conteudo antes/depois da execucao.
 PROD_FILES = [
     Path("experiments/nested_cv_scores.csv"),
-    Path("experiments/wilcoxon_results.csv"),
     Path("experiments/nested_cv_summary.csv"),
 ]
 
@@ -55,10 +53,7 @@ EXPECTED_FOLD_COLS = {
     "best_params_smote", "best_cv_score_smote",
 }
 
-EXPECTED_WILCOXON_COLS = {
-    "comparacao", "statistic", "p_value", "significativo_005",
-    "cliffs_delta", "effect_size_magnitude", "mean_diff", "mean_a", "mean_b",
-}
+EXPECTED_SUMMARY_COLS = {"modelo", "f1_macro_mean", "f1_macro_std", "f1_extender_mean"}
 
 N_OUTER   = 4   # producao usa 10
 N_INNER   = 2   # producao usa 5
@@ -124,7 +119,6 @@ def main() -> None:
             n_inner=N_INNER,
             param_grid=PARAM_GRID_SMOKE,
             cv_scores_path=SMOKE_CV_PATH,
-            wilcoxon_path=SMOKE_WILCOXON_PATH,
             summary_path=SMOKE_SUMMARY_PATH,
         )
         ok = _check("run_nested_cv executou sem excecao", True)
@@ -171,30 +165,25 @@ def main() -> None:
                 f"{out_range} valor(es) fora do intervalo")
     all_ok &= ok
 
-    # ── 8. CSV Wilcoxon existe e tem 3 linhas ──────────────────────────────────
+    # ── 8. Resumo (media +/- dp) existe e tem os 3 experimentos ──────────────
     try:
-        dw = pd.read_csv(SMOKE_WILCOXON_PATH)
-        ok = _check("CSV Wilcoxon existe", True, f"{len(dw)} linhas")
+        ds = pd.read_csv(SMOKE_SUMMARY_PATH)
+        ok = _check("CSV resumo existe", True, f"{len(ds)} linhas")
     except Exception as e:
-        ok = _check("CSV Wilcoxon existe", False, str(e))
+        ok = _check("CSV resumo existe", False, str(e))
         all_ok &= ok
         _check_final(all_ok)
         return
     all_ok &= ok
 
-    ok = _check("CSV Wilcoxon tem 3 comparacoes", len(dw) == 3,
-                f"encontrado: {len(dw)}")
+    ok = _check("CSV resumo tem os 3 experimentos", len(ds) == 3,
+                f"encontrado: {len(ds)}")
     all_ok &= ok
 
-    missing_w = EXPECTED_WILCOXON_COLS - set(dw.columns)
-    ok = _check("CSV Wilcoxon tem todas as colunas esperadas",
-                len(missing_w) == 0,
-                f"faltando: {missing_w}" if missing_w else "")
-    all_ok &= ok
-
-    # ── 9. p-values no intervalo [0, 1] ───────────────────────────────────────
-    p_ok = ((dw["p_value"] >= 0) & (dw["p_value"] <= 1)).all()
-    ok = _check("p-values no intervalo [0,1]", bool(p_ok))
+    missing_s = EXPECTED_SUMMARY_COLS - set(ds.columns)
+    ok = _check("CSV resumo tem as colunas esperadas",
+                len(missing_s) == 0,
+                f"faltando: {missing_s}" if missing_s else "")
     all_ok &= ok
 
     # ── 10. Verifica que smoke nao alterou os arquivos de producao (por hash) ──
@@ -208,7 +197,7 @@ def main() -> None:
     _check_final(all_ok)
 
     # Limpa arquivos de smoke
-    for f in [SMOKE_CV_PATH, SMOKE_WILCOXON_PATH, SMOKE_SUMMARY_PATH]:
+    for f in [SMOKE_CV_PATH, SMOKE_SUMMARY_PATH]:
         f.unlink(missing_ok=True)
     print("  Arquivos de smoke removidos.")
 

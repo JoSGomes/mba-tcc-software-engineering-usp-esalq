@@ -1,0 +1,315 @@
+{
+  "kappa_100": {
+    "total": {
+      "n": 100,
+      "concordancia": 88,
+      "kappa": 0.8038895244320967,
+      "labels": [
+        "application",
+        "helper",
+        "extender",
+        "other"
+      ],
+      "matriz_confusao (linhas=haiku, colunas=manual)": [
+        [
+          44,
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          35,
+          4,
+          0
+        ],
+        [
+          1,
+          0,
+          6,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3
+        ]
+      ]
+    },
+    "individual (1.000 caracteres)": {
+      "n": 61,
+      "concordancia": 60,
+      "kappa": 0.972348141432457,
+      "labels": [
+        "application",
+        "helper",
+        "extender",
+        "other"
+      ],
+      "matriz_confusao (linhas=haiku, colunas=manual)": [
+        [
+          29,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          25,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2
+        ]
+      ]
+    },
+    "lote (500 caracteres)": {
+      "n": 39,
+      "concordancia": 28,
+      "kappa": 0.558641975308642,
+      "labels": [
+        "application",
+        "helper",
+        "extender",
+        "other"
+      ],
+      "matriz_confusao (linhas=haiku, colunas=manual)": [
+        [
+          15,
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          10,
+          3,
+          0
+        ],
+        [
+          1,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    "confianca_min": 0.65
+  },
+  "baixa_confianca": {
+    "n": 30,
+    "concordancia": 13,
+    "kappa": 0.19047619047619035,
+    "labels": [
+      "application",
+      "helper",
+      "extender",
+      "other"
+    ],
+    "matriz_confusao (linhas=haiku, colunas=manual)": [
+      [
+        6,
+        0,
+        3,
+        1
+      ],
+      [
+        5,
+        1,
+        3,
+        1
+      ],
+      [
+        2,
+        1,
+        6,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "por_classe_haiku": {
+      "application": {
+        "n": 10,
+        "concordancia": 6
+      },
+      "helper": {
+        "n": 10,
+        "concordancia": 1
+      },
+      "extender": {
+        "n": 10,
+        "concordancia": 6
+      }
+    },
+    "populacao": {
+      "supervisionados": 12690,
+      "confianca_menor_0_8": 1213
+    }
+  },
+  "classes_excluidas": {
+    "haiku_incerto": {
+      "n": 15,
+      "manual": {
+        "application": 9,
+        "helper": 1,
+        "extender": 3,
+        "other": 2
+      }
+    },
+    "haiku_other": {
+      "n": 15,
+      "manual": {
+        "application": 2,
+        "helper": 0,
+        "extender": 1,
+        "other": 12
+      }
+    },
+    "rejeitados": {
+      "n": 16,
+      "manual_other": 8,
+      "manual_uma_das_3": 8
+    },
+    "aceitos": {
+      "n": 14,
+      "manual_other": 6,
+      "manual_uma_das_3": 8
+    },
+    "nota": "amostra estratificada (8/7 por estrato), não proporcional à população",
+    "populacao": [
+      {
+        "label": "incerto",
+        "ood_rejected": false,
+        "n": 281
+      },
+      {
+        "label": "incerto",
+        "ood_rejected": true,
+        "n": 17
+      },
+      {
+        "label": "other",
+        "ood_rejected": false,
+        "n": 1865
+      },
+      {
+        "label": "other",
+        "ood_rejected": true,
+        "n": 147
+      }
+    ]
+  },
+  "calibracao_oof": {
+    "feature": "sbert",
+    "n": 12690,
+    "ece": 0.018377508654004476,
+    "n_bins": 10,
+    "bins": [
+      {
+        "faixa": [
+          0.3,
+          0.4
+        ],
+        "n": 64,
+        "confianca_media": 0.3805812387727201,
+        "acuracia": 0.375
+      },
+      {
+        "faixa": [
+          0.4,
+          0.5
+        ],
+        "n": 800,
+        "confianca_media": 0.4665023374930024,
+        "acuracia": 0.5175
+      },
+      {
+        "faixa": [
+          0.5,
+          0.6
+        ],
+        "n": 2151,
+        "confianca_media": 0.549796520998621,
+        "acuracia": 0.5546257554625755
+      },
+      {
+        "faixa": [
+          0.6,
+          0.7
+        ],
+        "n": 2137,
+        "confianca_media": 0.6497691108012345,
+        "acuracia": 0.6612072999532054
+      },
+      {
+        "faixa": [
+          0.7,
+          0.8
+        ],
+        "n": 2296,
+        "confianca_media": 0.7505692510706622,
+        "acuracia": 0.764808362369338
+      },
+      {
+        "faixa": [
+          0.8,
+          0.9
+        ],
+        "n": 2581,
+        "confianca_media": 0.851410841027326,
+        "acuracia": 0.8322355676094537
+      },
+      {
+        "faixa": [
+          0.9,
+          1.0
+        ],
+        "n": 2661,
+        "confianca_media": 0.9458999555615365,
+        "acuracia": 0.9177001127395716
+      }
+    ],
+    "acuracia": 0.7399527186761229,
+    "confianca_media": 0.741258166952336,
+    "tau": 0.5,
+    "falsos_rejeitados (classes conhecidas com confianca < tau)": 0.06808510638297872,
+    "falsos_rejeitados_por_classe": {
+      "application": {
+        "n": 6130,
+        "falsos_rejeitados": 0.06378466557911909
+      },
+      "helper": {
+        "n": 5962,
+        "falsos_rejeitados": 0.0625628983562563
+      },
+      "extender": {
+        "n": 598,
+        "falsos_rejeitados": 0.16722408026755853
+      }
+    },
+    "rejeicao_classes_excluidas": 0.070995670995671,
+    "confianca_media_classes_excluidas": 0.7299030028614719
+  }
+}

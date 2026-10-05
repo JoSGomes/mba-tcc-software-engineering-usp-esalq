@@ -36,19 +36,16 @@ def _tokenize(text: str) -> list[str]:
     return text.lower().split()
 
 
-def build_doc2vec(
-    df: pd.DataFrame,
-    splits: dict[str, list[str]],
-    output_dir: Path = OUTPUT_DIR,
-) -> dict[str, np.ndarray]:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    id_to_idx = {rid: i for i, rid in enumerate(df["repo_id"])}
-    texts = make_combined_texts(df)
+def train_doc2vec_model(texts: list[str], tags: list[str] | None = None) -> Doc2Vec:
+    """Treina o Doc2Vec (parâmetros PROMISE'24) somente sobre `texts`.
 
-    train_idx = [id_to_idx[i] for i in splits["train"] if i in id_to_idx]
-    train_corpus = [
-        TaggedDocument(words=_tokenize(texts[i]), tags=[str(i)])
-        for i in train_idx
+    Chamado com os textos de treino — o split `train` aqui e, no nested CV
+    com seleção completa, a parte de treino de cada fold externo."""
+    if tags is None:
+        tags = [str(i) for i in range(len(texts))]
+    corpus = [
+        TaggedDocument(words=_tokenize(text), tags=[tag])
+        for text, tag in zip(texts, tags)
     ]
 
     model = Doc2Vec(
@@ -59,8 +56,32 @@ def build_doc2vec(
         workers=1,  # determinismo: worker único
         dm=1,  # PV-DM (distributed memory) — padrão gensim
     )
-    model.build_vocab(train_corpus)
-    model.train(train_corpus, total_examples=model.corpus_count, epochs=model.epochs)
+    model.build_vocab(corpus)
+    model.train(corpus, total_examples=model.corpus_count, epochs=model.epochs)
+    return model
+
+
+def infer_doc2vec(model: Doc2Vec, texts: list[str]) -> np.ndarray:
+    """Infere um vetor por texto com o modelo já treinado (infer_vector)."""
+    return np.vstack([
+        model.infer_vector(_tokenize(text), epochs=EPOCHS)
+        for text in texts
+    ])
+
+
+def build_doc2vec(
+    df: pd.DataFrame,
+    splits: dict[str, list[str]],
+    output_dir: Path = OUTPUT_DIR,
+) -> dict[str, np.ndarray]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    id_to_idx = {rid: i for i, rid in enumerate(df["repo_id"])}
+    texts = make_combined_texts(df)
+
+    train_idx = [id_to_idx[i] for i in splits["train"] if i in id_to_idx]
+    model = train_doc2vec_model(
+        [texts[i] for i in train_idx], tags=[str(i) for i in train_idx]
+    )
 
     model_path = output_dir / "doc2vec_model.bin"
     model.save(str(model_path))
@@ -71,10 +92,7 @@ def build_doc2vec(
         if split_name == "seed":
             continue
         idx = [id_to_idx[i] for i in ids if i in id_to_idx]
-        X = np.vstack([
-            model.infer_vector(_tokenize(texts[i]), epochs=EPOCHS)
-            for i in idx
-        ])
+        X = infer_doc2vec(model, [texts[i] for i in idx])
         path = output_dir / f"X_doc2vec_{split_name}.npy"
         np.save(path, X)
         results[split_name] = X

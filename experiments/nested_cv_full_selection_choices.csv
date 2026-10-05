@@ -1,0 +1,10 @@
+feature,model,n_folds_escolhido
+doc2vec,rf,0
+doc2vec,logreg,0
+doc2vec,xgboost,10
+sbert,rf,0
+sbert,logreg,0
+sbert,xgboost,10
+codebert,rf,0
+codebert,logreg,10
+codebert,xgboost,0

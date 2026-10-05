@@ -4,7 +4,8 @@ Experimentos (em ordem):
   1. RF baseline (params padrao) — sem tuning, sem SMOTE
   2. GridSearchCV sem SMOTE (CV=5 em train, scoring=f1_macro)
   3. SMOTE + GridSearchCV (SMOTE aplicado dentro de cada fold do CV via Pipeline)
-  4. Nested 10x5 CV + Wilcoxon signed-rank test (comparacao estatistica entre os 3 experimentos)
+  4. Nested 10x5 CV com os 3 experimentos (escores por fold; a comparacao
+     estatistica fica em modelagem/comparacoes_estatisticas.py)
 
 Os experimentos 1-3 sao pulados se ja existirem no registry.csv.
 O nested CV (passo 4) e pulado se experiments/nested_cv_scores.csv ja existir.
@@ -23,7 +24,6 @@ import numpy as np
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline as ImbPipeline
-from scipy.stats import wilcoxon as wilcoxon_test
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
@@ -37,15 +37,12 @@ from modelagem.common import (
     REGISTRY_PATH,
 )
 from modelagem.common import RF_PARAM_GRID as PARAM_GRID
-from modelagem.common import cliffs_delta as _cliffs_delta
-from modelagem.common import cliffs_magnitude as _cliffs_magnitude
 from modelagem.common import compute_metrics as _metrics
 from modelagem.common import load_split as _load
 from modelagem.common import register_experiment as _register
 from modelagem.common import save_confusion_figure as _save_confusion_figure
 
 NESTED_CV_PATH  = Path("experiments/nested_cv_scores.csv")
-WILCOXON_PATH   = Path("experiments/wilcoxon_results.csv")
 SUMMARY_PATH    = Path("experiments/nested_cv_summary.csv")
 
 
@@ -204,20 +201,18 @@ def run_nested_cv(
     n_inner: int = 5,
     param_grid: dict | None = None,
     cv_scores_path: Path = NESTED_CV_PATH,
-    wilcoxon_path: Path = WILCOXON_PATH,
     summary_path: Path = SUMMARY_PATH,
 ) -> None:
-    """Nested CV + Wilcoxon signed-rank test (dois lados, alpha=0.05).
+    """Nested CV dos tres experimentos do RF.
 
     Loop externo: StratifiedKFold(n_outer) — gera as observacoes emparelhadas.
     Loop interno: StratifiedKFold(n_inner) dentro do GridSearchCV — seleciona
       hiperparametros sem ver os dados do fold externo.
 
     Usa train+val+test_indist (12.690 exemplos supervisionados).
-    test_ood e mantido fora (ver avaliacao/ood_analysis.py).
-
-    Referencia: Demsar (2006). Statistical Comparisons of Classifiers over
-    Multiple Data Sets. JMLR 7, 1-30.
+    test_ood e mantido fora (ver avaliacao/ood_analysis.py). Salva os
+    escores por fold e o resumo (media +/- dp); a comparacao estatistica entre
+    os experimentos fica em modelagem/comparacoes_estatisticas.py.
     """
     pg = param_grid if param_grid is not None else PARAM_GRID
     param_grid_smote = {f"rf__{k}": v for k, v in pg.items()}
@@ -266,7 +261,7 @@ def run_nested_cv(
               f"gridsearch={m_g['f1_extender']:.4f}  smote={m_s['f1_extender']:.4f}")
         print(f"    best_CV:  gridsearch={grid.best_score_:.4f}  smote={grid_s.best_score_:.4f}")
 
-        # Salva todas as metricas do fold — base para tabela TCC (media +/- std) e Wilcoxon
+        # Salva todas as metricas do fold — base para a tabela do TCC (media +/- std)
         record: dict = {"fold": fold}
         for prefix, m, best_params, best_cv in [
             ("baseline",   m_b, None,   None),
@@ -321,45 +316,6 @@ def run_nested_cv(
     pd.DataFrame(summary_rows).to_csv(summary_path, index=False)
     print(f"  Resumo salvo em {summary_path}")
 
-    # ── Wilcoxon + Cliff's delta ───────────────────────────────────────────────
-    pairs = [
-        ("baseline",   "gridsearch", "Exp1 (baseline) vs Exp2 (GridSearchCV)"),
-        ("baseline",   "smote",      "Exp1 (baseline) vs Exp3 (SMOTE+GridSearchCV)"),
-        ("gridsearch", "smote",      "Exp2 (GridSearchCV) vs Exp3 (SMOTE+GridSearchCV)"),
-    ]
-    print("\n  Wilcoxon signed-rank test + Cliff's delta (bicaudal, alpha = 0.05):")
-    rows = []
-    for a, b, label in pairs:
-        arr_a = scores_df[f"f1_macro_{a}"].tolist()
-        arr_b = scores_df[f"f1_macro_{b}"].tolist()
-        try:
-            stat, p = wilcoxon_test(arr_a, arr_b, alternative="two-sided")
-        except ValueError:
-            # Diferenca zero em todos os folds: modelos identicos
-            stat, p = 0.0, 1.0
-            print(f"    [aviso] {label}: diferenca zero em todos os folds — p=1.0")
-        sig   = "sim" if p < 0.05 else "nao"
-        delta = _cliffs_delta(arr_a, arr_b)
-        mag   = _cliffs_magnitude(delta)
-        mean_diff = float(np.mean(np.array(arr_a) - np.array(arr_b)))
-        print(f"    {label}")
-        print(f"      W={stat:.4f}  p={p:.4f}  sig={sig}"
-              f"  delta={delta:.4f} ({mag})  mean_diff={mean_diff:+.4f}")
-        rows.append({
-            "comparacao":          label,
-            "statistic":           stat,
-            "p_value":             p,
-            "significativo_005":   sig,
-            "cliffs_delta":        delta,
-            "effect_size_magnitude": mag,
-            "mean_diff":           mean_diff,
-            "mean_a":              float(np.mean(arr_a)),
-            "mean_b":              float(np.mean(arr_b)),
-        })
-
-    pd.DataFrame(rows).to_csv(wilcoxon_path, index=False)
-    print(f"\n  Resultados Wilcoxon salvos em {wilcoxon_path}")
-
 
 def main() -> None:
     X_train, y_train = _load("train")
@@ -406,22 +362,12 @@ def main() -> None:
 
     # Nested CV para comparacao estatistica (executa uma unica vez, ~3-4h)
     if not NESTED_CV_PATH.exists():
-        print("\n[4/4] Nested 10x5 CV + Wilcoxon (~3-4h)...")
+        print("\n[4/4] Nested 10x5 CV (~3-4h)...")
         X_all = np.concatenate([X_train, X_val, X_test])
         y_all = np.concatenate([y_train, y_val, y_test])
         run_nested_cv(X_all, y_all)
     else:
-        print(f"\n[4/4] Nested CV ja executado ({NESTED_CV_PATH}) — relendo Wilcoxon")
-        scores_df = pd.read_csv(NESTED_CV_PATH)
-        pairs = [
-            ("f1_macro_baseline",   "f1_macro_gridsearch", "Exp1 vs Exp2"),
-            ("f1_macro_baseline",   "f1_macro_smote",      "Exp1 vs Exp3"),
-            ("f1_macro_gridsearch", "f1_macro_smote",      "Exp2 vs Exp3"),
-        ]
-        print("  Wilcoxon (a partir dos scores ja salvos):")
-        for a, b, label in pairs:
-            stat, p = wilcoxon_test(scores_df[a], scores_df[b], alternative="two-sided")
-            print(f"    {label}: p={p:.4f}  {'*' if p < 0.05 else 'n.s.'}")
+        print(f"\n[4/4] Nested CV ja executado ({NESTED_CV_PATH}) — pulando")
 
 
 if __name__ == "__main__":

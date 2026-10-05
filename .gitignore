@@ -43,6 +43,7 @@ data/interim/*
 !data/raw/uncertain_for_review.csv
 !data/raw/kappa_result.json
 !data/raw/labels.parquet
+!data/raw/revisao_manual_amostra.csv
 !data/processed/kappa_review_input.json
 
 # Models
@@ -52,11 +53,15 @@ data/interim/*
 *.pt
 *.pth
 
-# Experiment artifacts (manter registry.csv e a matriz de confusao agregada entre representacoes)
+# Experiment artifacts (versionar os resultados usados no TCC)
 experiments/*.json
 !experiments/registry.csv
-!experiments/nested_cv_confusion_matrices.json
+!experiments/nested_cv_full_selection_confusion_matrices.json
 !experiments/ood_analysis_result.json
+!experiments/revisao_manual_result.json
+# checkpoints por fold do nested CV (so para retomar a execucao) e saidas dos smoke tests
+experiments/nested_cv_full_selection_checkpoints/
+experiments/_smoke*/
 
 # IDE
 .vscode/

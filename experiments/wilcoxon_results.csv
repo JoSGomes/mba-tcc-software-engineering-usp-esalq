@@ -1,4 +1,0 @@
-comparacao,statistic,p_value,significativo_005,cliffs_delta,effect_size_magnitude,mean_diff,mean_a,mean_b
-Exp1 (baseline) vs Exp2 (GridSearchCV),4.0,0.013671875,sim,-0.6,grande,-0.025208428924708072,0.5141116818787677,0.5393201108034759
-Exp1 (baseline) vs Exp3 (SMOTE+GridSearchCV),0.0,0.001953125,sim,-1.0,grande,-0.04401510786262358,0.5141116818787677,0.5581267897413913
-Exp2 (GridSearchCV) vs Exp3 (SMOTE+GridSearchCV),9.0,0.064453125,nao,-0.4,medio,-0.01880667893791551,0.5393201108034759,0.5581267897413913

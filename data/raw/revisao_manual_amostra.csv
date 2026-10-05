@@ -1,0 +1,61 @@
+repo_id,name,grupo,estrato,label,confidence,label_source,ood_confidence,ood_pred,ood_rejected,manual_label
+levihsu/OOTDiffusion,OOTDiffusion,baixa_confianca,"application, conf < 0.8",application,0.75,haiku_auto_batch,,,,extender
+AgriciDaniel/claude-seo,claude-seo,baixa_confianca,"application, conf < 0.8",application,0.7,haiku_auto_batch,,,,extender
+jeffli1993/springboot-learning-example,springboot-learning-example,classes_excluidas,"other, rejeitado",other,0.98,haiku_auto_batch,0.45877415,helper,True,other
+ClassicOldSong/Apollo,Apollo,classes_excluidas,"incerto, rejeitado",incerto,0.45,haiku_auto_batch,0.44952545,application,True,application
+tianxiaomo/pytorch-yolov4,pytorch-yolov4,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,extender
+ko1o/pysearch,pysearch,classes_excluidas,"incerto, aceito",incerto,0.3,haiku_auto_batch,0.80886644,helper,False,application
+applenob/cpp_primer_practice,cpp_primer_practice,classes_excluidas,"other, rejeitado",other,0.95,haiku_auto_batch,0.45785737,extender,True,other
+therealXiaomanChu/ex-skill,ex-skill,classes_excluidas,"incerto, rejeitado",incerto,0.3,haiku_auto_batch,0.45886904,application,True,extender
+menzi11/bullshitgenerator,bullshitgenerator,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,application
+decolua/9router,9router,classes_excluidas,"incerto, aceito",incerto,0.4,haiku_auto_batch,0.5162644,application,False,application
+FxEmbed/FxEmbed,FxEmbed,classes_excluidas,"incerto, rejeitado",incerto,0.5,haiku_auto_batch,0.48372343,application,True,application
+sohzm/cheating-daddy,cheating-daddy,classes_excluidas,"incerto, rejeitado",incerto,0.5,haiku_auto_batch,0.42052436,extender,True,application
+frontendmasters/front-end-handbook-2018,front-end-handbook-2018,classes_excluidas,"other, rejeitado",other,0.95,haiku_auto_batch,0.3638238,extender,True,other
+cocoindex-io/cocoindex,cocoindex,baixa_confianca,"application, conf < 0.8",application,0.75,haiku_auto_batch,,,,application
+sipeed/picoclaw,picoclaw,classes_excluidas,"incerto, rejeitado",incerto,0.5,haiku_auto_batch,0.48834252,helper,True,application
+paolocuscela/cards,cards,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,helper
+ansh/jiffyreader-public-archive,jiffyreader-public-archive,baixa_confianca,"application, conf < 0.8",application,0.75,haiku_auto_batch,,,,extender
+justlovemaki/AIClient-2-API,AIClient-2-API,baixa_confianca,"application, conf < 0.8",application,0.65,haiku_auto_batch,,,,application
+midudev/preguntas-entrevista-react,preguntas-entrevista-react,classes_excluidas,"other, aceito",other,0.95,haiku_auto_batch,0.5516861,helper,False,other
+WECENG/ticket-purchase,ticket-purchase,baixa_confianca,"application, conf < 0.8",application,0.7,haiku_auto_batch,,,,application
+epicmaxco/vuestic-admin,vuestic-admin,classes_excluidas,"other, aceito",other,0.85,haiku_auto_batch,0.89600706,helper,False,application
+thinkgem/jeesite,jeesite,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,application
+pittcsc/summer2023-internships,summer2023-internships,classes_excluidas,"other, rejeitado",other,0.95,haiku_auto_batch,0.4620222,application,True,other
+BIT-DataLab/Edit-Banana,Edit-Banana,classes_excluidas,"incerto, aceito",incerto,0.3,haiku_auto_batch,0.6434135,helper,False,application
+xcanwin/keepchatgpt,keepchatgpt,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,extender
+vicinaehq/vicinae,vicinae,classes_excluidas,"incerto, aceito",incerto,0.4,haiku_auto_batch,0.8604132,application,False,application
+foamzou/melody,melody,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,application
+pop-os/shell,shell,baixa_confianca,"extender, conf < 0.8",extender,0.7,haiku_auto_batch,,,,extender
+iamgio/quarkdown,quarkdown,baixa_confianca,"application, conf < 0.8",application,0.65,haiku_auto_batch,,,,application
+tailwindlabs/heroicons,heroicons,classes_excluidas,"other, rejeitado",other,0.9,haiku_auto_batch,0.47840413,helper,True,extender
+TokisanGames/Terrain3D,Terrain3D,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,extender
+samhenrigold/LidAngleSensor,LidAngleSensor,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,application
+emmetio/emmet,emmet,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,helper
+tessalt/echo-chamber-js,echo-chamber-js,classes_excluidas,"incerto, aceito",incerto,0.5,haiku_auto_batch,0.6501344,application,False,extender
+jvm-profiling-tools/async-profiler,async-profiler,baixa_confianca,"helper, conf < 0.8",helper,0.65,haiku_auto_batch,,,,extender
+yanshengjia/ml-road,ml-road,classes_excluidas,"other, rejeitado",other,0.8,haiku_auto_batch,0.49147695,application,True,other
+Max-Eee/NeoPass,NeoPass,classes_excluidas,"incerto, aceito",incerto,0.3,haiku_auto_batch,0.8514597,extender,False,extender
+cruip/open-react-template,open-react-template,classes_excluidas,"other, aceito",other,0.9,haiku_auto_batch,0.77591467,helper,False,application
+blackmatrix7/ios_rule_script,ios_rule_script,classes_excluidas,"other, rejeitado",other,0.8,haiku_auto_batch,0.3989243,helper,True,other
+langbot-app/LangBot,LangBot,baixa_confianca,"extender, conf < 0.8",extender,0.7,haiku_auto_batch,,,,extender
+sergdort/ModernCleanArchitectureSwiftUI,ModernCleanArchitectureSwiftUI,classes_excluidas,"other, aceito",other,0.9,haiku_auto_batch,0.7909111,helper,False,other
+KlingTeam/LivePortrait,LivePortrait,baixa_confianca,"application, conf < 0.8",application,0.7,haiku_auto_batch,,,,application
+qunash/chatgpt-advanced,chatgpt-advanced,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,extender
+tgsan/cmwtat_digital_edition,cmwtat_digital_edition,baixa_confianca,"application, conf < 0.8",application,0.7,haiku_auto_batch,,,,application
+antfu/skills,skills,classes_excluidas,"incerto, rejeitado",incerto,0.5,haiku_auto_batch,0.45396143,helper,True,other
+dennybritz/reinforcement-learning,reinforcement-learning,classes_excluidas,"other, aceito",other,0.95,haiku_auto_batch,0.9102439,helper,False,other
+Visualize-ML/Book1_Python-For-Beginners,Book1_Python-For-Beginners,classes_excluidas,"other, rejeitado",other,0.95,haiku_auto_batch,0.46249947,application,True,other
+RooCodeInc/Roo-Code,Roo-Code,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,extender
+mumuy/relationship,relationship,classes_excluidas,"incerto, rejeitado",incerto,0.5,haiku_auto_batch,0.49670273,application,True,helper
+nickcarneiro/curlconverter,curlconverter,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,application
+pinchtab/pinchtab,pinchtab,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,application
+coleam00/ottomator-agents,ottomator-agents,baixa_confianca,"helper, conf < 0.8",helper,0.75,haiku_auto_batch,,,,other
+jackhawks/rectg,rectg,classes_excluidas,"incerto, aceito",incerto,0.35,haiku_auto_batch,0.95259494,application,False,other
+Zie619/n8n-workflows,n8n-workflows,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,other
+dingyufei615/ai-goofish-monitor,ai-goofish-monitor,baixa_confianca,"application, conf < 0.8",application,0.75,haiku_auto_batch,,,,other
+chefyuan/algorithm-base,algorithm-base,classes_excluidas,"other, aceito",other,0.9,haiku_auto_batch,0.6923896,application,False,other
+geldata/gel,gel,baixa_confianca,"helper, conf < 0.8",helper,0.5,haiku_auto_batch,,,,extender
+tgbot-collection/yyetsbot,yyetsbot,baixa_confianca,"extender, conf < 0.8",extender,0.75,haiku_auto_batch,,,,application
+cgzirim/seek-tune,seek-tune,classes_excluidas,"incerto, rejeitado",incerto,0.3,haiku_auto_batch,0.4600491,application,True,application
+amejiarosario/dsa.js-data-structures-algorithms-javascript,dsa.js-data-structures-algorithms-javascript,classes_excluidas,"other, aceito",other,0.85,haiku_auto_batch,0.9840329,helper,False,other

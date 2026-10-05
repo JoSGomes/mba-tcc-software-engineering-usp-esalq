@@ -1,18 +1,17 @@
-"""Funcoes e constantes compartilhadas entre modelagem/baseline.py (Doc2Vec+RF)
-e modelagem/compare_models.py (comparacao entre representacoes e classificadores).
+"""Funcoes e constantes compartilhadas pelos experimentos de modelagem
+(modelagem/baseline.py, modelagem/compare_models.py e
+modelagem/nested_cv_full_selection.py).
 """
 
 from __future__ import annotations
 
 import json
-from itertools import combinations
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from scipy.stats import wilcoxon as wilcoxon_test
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 
@@ -21,14 +20,15 @@ REGISTRY_PATH = Path("experiments/registry.csv")
 FIGURES_DIR   = Path("experiments/figures")
 LABEL_CLASSES = ["application", "helper", "extender"]
 
-# Comparacao entre representacoes (nested CV) — nomes de arquivo distintos dos
-# do baseline Doc2Vec+RF: nunca sobrescrevem nested_cv_scores.csv/
-# nested_cv_summary.csv/wilcoxon_results.csv
-NESTED_EMBEDDINGS_CV_PATH        = Path("experiments/nested_cv_embeddings_scores.csv")
-NESTED_EMBEDDINGS_SUMMARY_PATH   = Path("experiments/nested_cv_embeddings_summary.csv")
-WILCOXON_EMBEDDINGS_PATH         = Path("experiments/wilcoxon_embeddings_results.csv")
-CONFUSION_MATRICES_JSON_PATH     = Path("experiments/nested_cv_confusion_matrices.json")
-CONFUSION_COMPARISON_FIGURE_PATH = Path("experiments/figures/cm_nested_embeddings_comparison.tiff")
+# Comparacao entre as representacoes textuais: nested CV com o ajuste do
+# Doc2Vec e a escolha do classificador dentro de cada fold externo.
+FULL_SELECTION_CV_PATH           = Path("experiments/nested_cv_full_selection_scores.csv")
+FULL_SELECTION_SUMMARY_PATH      = Path("experiments/nested_cv_full_selection_summary.csv")
+FULL_SELECTION_CONFUSION_PATH    = Path("experiments/nested_cv_full_selection_confusion_matrices.json")
+FULL_SELECTION_FIGURE_PATH       = Path("experiments/figures/cm_nested_full_selection_comparison.tiff")
+FULL_SELECTION_OOF_PROBAS_PATH   = Path("experiments/nested_cv_full_selection_oof_probas.csv")
+FULL_SELECTION_CHOICES_PATH      = Path("experiments/nested_cv_full_selection_choices.csv")
+FULL_SELECTION_CHECKPOINT_DIR    = Path("experiments/nested_cv_full_selection_checkpoints")
 
 RF_PARAM_GRID = {
     "n_estimators": [100, 200, 500],
@@ -89,35 +89,22 @@ def save_confusion_figure(
     print(f"  Figura salva: {out}")
 
 
-def cliffs_delta(a: list[float], b: list[float]) -> float:
-    """Cliff's delta (tamanho do efeito nao-parametrico) para amostras emparelhadas."""
-    diffs = np.array(a) - np.array(b)
-    return float((np.sum(diffs > 0) - np.sum(diffs < 0)) / len(diffs))
-
-
-def cliffs_magnitude(delta: float) -> str:
-    d = abs(delta)
-    if d < 0.147: return "negligivel"
-    if d < 0.330: return "pequeno"
-    if d < 0.474: return "medio"
-    return "grande"
-
-
 def run_nested_cv_configs(
     configs: dict[str, dict],
     y_all: np.ndarray,
     n_outer: int = 10,
     n_inner: int = 5,
-    cv_scores_path: Path = NESTED_EMBEDDINGS_CV_PATH,
-    wilcoxon_path: Path = WILCOXON_EMBEDDINGS_PATH,
-    summary_path: Path = NESTED_EMBEDDINGS_SUMMARY_PATH,
-    confusion_matrices_path: Path = CONFUSION_MATRICES_JSON_PATH,
-    confusion_figure_path: Path = CONFUSION_COMPARISON_FIGURE_PATH,
+    *,
+    cv_scores_path: Path,
+    summary_path: Path,
+    confusion_matrices_path: Path,
+    confusion_figure_path: Path,
     labels: list[str] = LABEL_CLASSES,
     seed: int = 42,
 ) -> None:
-    """Nested CV generalizado comparando N configs (ex.: representacoes) — versao
-    generica de modelagem/baseline.py::run_nested_cv.
+    """Nested CV generalizado comparando N configs (ex.: representacoes) com
+    o classificador ja fixado por config — versao generica de
+    modelagem/baseline.py::run_nested_cv.
 
     Cada config traz seu proprio X_all, um `pipeline_factory` (callable sem
     argumentos que retorna um ImbPipeline nao-ajustado) e um `param_grid`
@@ -125,8 +112,7 @@ def run_nested_cv_configs(
 
     O StratifiedKFold externo e calculado UMA UNICA VEZ a partir de y_all (os
     indices de fold nao dependem de X) e aplicado a cada config — garante o
-    pareamento por fold exigido pelo Wilcoxon signed-rank test mesmo com
-    arrays X_all distintos por config (doc2vec/sbert/codebert sao
+    pareamento por fold das comparacoes mesmo com arrays X_all distintos por config (doc2vec/sbert/codebert sao
     linha-a-linha alinhados por construcao: mesmos repos, mesma ordem, cada
     um com seu proprio X_{feature}_{split}.npy mas y_{split}.npy compartilhado).
 
@@ -137,10 +123,10 @@ def run_nested_cv_configs(
     configs: {nome: {"X_all": np.ndarray, "pipeline_factory": Callable[[], Any],
                       "param_grid": dict}}
 
-    Salva scores por fold, resumo (media +/- dp), Wilcoxon + Cliff's delta
-    entre cada par de configs, e matriz de confusao agregada por config (soma
-    dos n_outer folds externos — mais rigorosa que a matriz de um unico
-    split) em contagem absoluta e normalizada por linha (%).
+    Salva scores por fold, resumo (media +/- dp) e matriz de confusao
+    agregada por config (soma dos n_outer folds externos) em contagem
+    absoluta e normalizada por linha (%). As comparacoes estatisticas entre
+    configs ficam em modelagem/comparacoes_estatisticas.py.
     """
     names = list(configs.keys())
     n_classes = len(labels)
@@ -193,8 +179,36 @@ def run_nested_cv_configs(
 
         fold_records.append(record)
 
+    summarize_nested_cv(
+        pd.DataFrame(fold_records), confusion_sums, names,
+        n_outer=n_outer,
+        cv_scores_path=cv_scores_path,
+        summary_path=summary_path,
+        confusion_matrices_path=confusion_matrices_path,
+        confusion_figure_path=confusion_figure_path,
+        labels=labels,
+    )
+
+
+def summarize_nested_cv(
+    scores_df: pd.DataFrame,
+    confusion_sums: dict[str, np.ndarray],
+    names: list[str],
+    n_outer: int,
+    cv_scores_path: Path,
+    summary_path: Path,
+    confusion_matrices_path: Path,
+    confusion_figure_path: Path,
+    labels: list[str] = LABEL_CLASSES,
+) -> None:
+    """Agrega os resultados de um nested CV: salva scores por fold, resumo
+    (media +/- dp) e a matriz de confusao agregada (JSON + figura 2xN).
+
+    `scores_df` tem uma linha por fold externo e colunas `<metrica>_<nome>`;
+    `confusion_sums` traz, por config, a soma das matrizes de confusao dos
+    folds externos. Compartilhado por run_nested_cv_configs e pelo nested CV
+    com selecao completa (modelagem/nested_cv_full_selection.py)."""
     cv_scores_path.parent.mkdir(parents=True, exist_ok=True)
-    scores_df = pd.DataFrame(fold_records)
     scores_df.to_csv(cv_scores_path, index=False)
     print(f"\n  Scores por fold salvos em {cv_scores_path}")
 
@@ -220,40 +234,6 @@ def run_nested_cv_configs(
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(summary_rows).to_csv(summary_path, index=False)
     print(f"  Resumo salvo em {summary_path}")
-
-    # ── Wilcoxon + Cliff's delta entre cada par de configs ──────────────────
-    print("\n  Wilcoxon signed-rank test + Cliff's delta (bicaudal, alpha = 0.05):")
-    rows = []
-    for a, b in combinations(names, 2):
-        arr_a = scores_df[f"f1_macro_{a}"].tolist()
-        arr_b = scores_df[f"f1_macro_{b}"].tolist()
-        try:
-            stat, p = wilcoxon_test(arr_a, arr_b, alternative="two-sided")
-        except ValueError:
-            stat, p = 0.0, 1.0
-            print(f"    [aviso] {a} vs {b}: diferenca zero em todos os folds — p=1.0")
-        sig   = "sim" if p < 0.05 else "nao"
-        delta = cliffs_delta(arr_a, arr_b)
-        mag   = cliffs_magnitude(delta)
-        mean_diff = float(np.mean(np.array(arr_a) - np.array(arr_b)))
-        label = f"{a} vs {b}"
-        print(f"    {label}")
-        print(f"      W={stat:.4f}  p={p:.4f}  sig={sig}"
-              f"  delta={delta:.4f} ({mag})  mean_diff={mean_diff:+.4f}")
-        rows.append({
-            "comparacao":            label,
-            "statistic":             stat,
-            "p_value":               p,
-            "significativo_005":     sig,
-            "cliffs_delta":          delta,
-            "effect_size_magnitude": mag,
-            "mean_diff":             mean_diff,
-            "mean_a":                float(np.mean(arr_a)),
-            "mean_b":                float(np.mean(arr_b)),
-        })
-
-    pd.DataFrame(rows).to_csv(wilcoxon_path, index=False)
-    print(f"\n  Resultados Wilcoxon salvos em {wilcoxon_path}")
 
     # ── Matriz de confusao agregada (contagem + normalizada por linha) ─────
     matrices_raw = {name: confusion_sums[name].tolist() for name in names}
