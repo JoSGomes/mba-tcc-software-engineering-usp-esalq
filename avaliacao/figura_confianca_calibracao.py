@@ -1,7 +1,11 @@
 """Figura 6 do TCC: distribuição da maior probabilidade de predição nas três
 classes conhecidas (probabilidades das rodadas externas do nested CV, SBERT)
-e nas classes excluídas do treino (a), e curva de confiabilidade nas classes
-conhecidas (b).
+e nas classes excluídas do treino (painel A), e curva de confiabilidade nas
+classes conhecidas (painel B).
+
+Painéis identificados por letra maiúscula sem pontuação no canto superior
+esquerdo, sem linhas de grade e com eixos pretos de 1,5 pt (manual de normas
+USP/Esalq, item 15.1 e Tabela 8).
 
 Entradas:
   - experiments/nested_cv_full_selection_oof_probas.csv
@@ -32,17 +36,17 @@ TAU = 0.5
 
 KNOWN = "#2a78d6"     # classes conhecidas
 EXCLUDED = "#eb6834"  # classes excluídas do treino
-INK = "#2b2b2b"
+INK = "#000000"
 MUTED = "#6b6b6b"
-GRID = "#e4e4e2"
 
 plt.rcParams.update({
     "font.family": "Arial",
     "font.size": 9,
-    "axes.edgecolor": MUTED,
+    "axes.edgecolor": INK,
+    "axes.linewidth": 1.5,
     "axes.labelcolor": INK,
-    "xtick.color": MUTED,
-    "ytick.color": MUTED,
+    "xtick.color": INK,
+    "ytick.color": INK,
     "axes.spines.top": False,
     "axes.spines.right": False,
 })
@@ -61,7 +65,7 @@ def main(bars: bool = True) -> None:
 
     fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(6.3, 2.9), gridspec_kw={"width_ratios": [1.35, 1]})
 
-    # (a) distribuições, em % de cada grupo (os grupos têm tamanhos diferentes)
+    # A: distribuições, em % de cada grupo (os grupos têm tamanhos diferentes)
     groups = (
         (conf_known, KNOWN, "-", None, f"Classes conhecidas (n = {len(conf_known):,})".replace(",", ".")),
         (conf_excl, EXCLUDED, "--", "////", f"Classes excluídas do treino (n = {len(conf_excl):,})".replace(",", ".")),
@@ -90,9 +94,9 @@ def main(bars: bool = True) -> None:
     ax_a.set_ylabel("Repositórios do grupo (%)")
     ax_a.set_xlim(0.3, 1.0)
     ax_a.legend(frameon=False, loc="upper left", bbox_to_anchor=(0, 1.2), fontsize=8, handlelength=2.5)
-    ax_a.set_title("(a)", loc="left", fontsize=9, color=INK, pad=24)
+    ax_a.set_title("A", loc="left", fontsize=10, color=INK, pad=24)
 
-    # (b) curva de confiabilidade nas classes conhecidas
+    # B: curva de confiabilidade nas classes conhecidas
     bins = [b for b in calib["bins"] if b["n"] > 0]
     x = [b["confianca_media"] for b in bins]
     y = [b["acuracia"] for b in bins]
@@ -106,11 +110,9 @@ def main(bars: bool = True) -> None:
     ax_b.set_ylim(0.3, 1.0)
     ax_b.set_aspect("equal")
     ax_b.legend(frameon=False, loc="upper left", bbox_to_anchor=(0, 1.2), fontsize=8, handlelength=2.5)
-    ax_b.set_title("(b)", loc="left", fontsize=9, color=INK, pad=24)
+    ax_b.set_title("B", loc="left", fontsize=10, color=INK, pad=24)
 
     for ax in (ax_a, ax_b):
-        ax.grid(axis="y", color=GRID, linewidth=0.6)
-        ax.set_axisbelow(True)
         ax.xaxis.set_major_formatter(comma)
     ax_a.yaxis.set_major_formatter(integer)
     ax_b.yaxis.set_major_formatter(comma)

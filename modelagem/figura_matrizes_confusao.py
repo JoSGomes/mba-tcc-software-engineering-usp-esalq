@@ -1,6 +1,8 @@
 """Figura 5 do TCC: matrizes de confusão agregadas das três representações na
 validação cruzada aninhada (contagem absoluta e normalizada por linha), em
-tamanho de página e com vírgula decimal.
+tamanho de página e com vírgula decimal. Painéis identificados por letras A–F
+no canto superior esquerdo, sem pontuação (manual de normas USP/Esalq,
+item 15.1).
 
 Lê os mesmos dados da figura original (`common.py::save_confusion_comparison_figure`),
 que não é alterada.
@@ -24,7 +26,6 @@ SRC = EXP_DIR / "nested_cv_full_selection_confusion_matrices.json"
 OUT = EXP_DIR / "figures" / "matrizes_confusao_representacoes"
 NAMES = {"doc2vec": "Doc2Vec", "sbert": "SBERT", "codebert": "CodeBERT"}
 INK = "#2b2b2b"
-MUTED = "#6b6b6b"
 
 plt.rcParams.update({"font.family": "Arial", "font.size": 8, "axes.labelcolor": INK,
                      "xtick.color": INK, "ytick.color": INK})
@@ -66,10 +67,12 @@ def main() -> None:
             ax = axes[row, col]
             ax.set_xticklabels(labels, fontsize=7.5)
             ax.set_yticklabels(labels if col == 0 else [], fontsize=7.5, rotation=90, va="center")
-            ax.set_xlabel("Classe predita", fontsize=8, color=MUTED)
+            ax.set_xlabel("Classe predita", fontsize=8, color=INK)
         axes[0, col].set_ylabel("")
-    axes[0, 0].set_ylabel("Classe verdadeira\n(contagem)", fontsize=8, color=MUTED)
-    axes[1, 0].set_ylabel("Classe verdadeira\n(% da linha)", fontsize=8, color=MUTED)
+    for ax, letter in zip(axes.flat, "ABCDEF"):
+        ax.set_title(letter, loc="left", fontsize=10, color=INK, pad=6)
+    axes[0, 0].set_ylabel("Classe verdadeira\n(contagem)", fontsize=8, color=INK)
+    axes[1, 0].set_ylabel("Classe verdadeira\n(% da linha)", fontsize=8, color=INK)
     fig.tight_layout(h_pad=1.2, w_pad=0.6)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT.with_suffix(".tiff"), dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
